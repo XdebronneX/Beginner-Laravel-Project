@@ -17,7 +17,7 @@
             @endif
             <div class="login-box">
                  <h2>Sign in</h2>
-            <form class="" action="{{ route('employee.signin') }}" method="post" enctype="multipart/form-data"/>
+            <form class="" action="{{ route('employee.signin') }}" method="post" enctype="multipart/form-data">
                 {{ csrf_field() }}
                 <div class="user-box">
                     <label for="email">Email: </label>
