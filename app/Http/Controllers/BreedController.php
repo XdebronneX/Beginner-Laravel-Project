@@ -99,9 +99,8 @@ class BreedController extends Controller
                         $input = $request->all();           
                         $breed->update($input);
                             return Redirect::to('/breed')->with('success','breed has been updated!');
-                        } 
+    } 
             
-    
 
     /**
      * Remove the specified resource from storage.
