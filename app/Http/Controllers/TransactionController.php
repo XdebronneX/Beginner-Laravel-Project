@@ -178,7 +178,7 @@ class TransactionController extends Controller
             ->leftJoin('customers','customers.customer_id','=','pets.customer_id')
             ->leftJoin('grooming_service','grooming_service.service_id','=','groomingline.service_id')
             ->select('grooming_info.groominginfo_id','customers.lname','customers.fname','pets.pname','grooming_service.service_name','grooming_info.status','grooming_info.created_at')
-            ->where('lname','LIKE', '%' .$search. '%')
+            ->where('pname','LIKE', '%' .$search. '%')
              ->get();
            
         // return View::make('history.index',compact('transacts'));

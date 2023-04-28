@@ -18,11 +18,16 @@
         <span><strong>ADD CUSTOMER</strong></span></a><center>            
     </a>
   </div>
-@if ($message = Session::get('success'))
+{{-- @if ($message = Session::get('success'))
  <div class="alert alert-success alert-block">
  <button type="button" class="close" data-dismiss="alert">×</button> 
     <strong>{{ $message }}</strong>
  </div>
+@endif --}}
+@if (count($errors) > 0)
+  @include('layouts.flash-messages') 
+@else
+  @include('layouts.flash-messages') 
 @endif
 <div class="table-responsive">
 <table class="table table-striped table-hover">

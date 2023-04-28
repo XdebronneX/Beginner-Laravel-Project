@@ -268,6 +268,6 @@ class CustomerController extends Controller
     public function restore($customer_id) {
 
         Customer::withTrashed()->where('customer_id',$customer_id)->restore();
-        return  Redirect::route('customer.index')->with('success','customer restored successfully!');
+        return  Redirect::route('customer.index')->with('warning','customer restored successfully!');
     }
 }
