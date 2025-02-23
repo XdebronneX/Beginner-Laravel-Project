@@ -1,41 +1,49 @@
 @extends('layouts.master')
+
 @section('content')
-<style>
- .container {
-  color:  #FFFFFF;
-}
-</style>
-<div class="container">
-  <h2>Edit Customer</h2>
-   {{ Form::model($service,['route' => ['service.update',$service->service_id],'method'=>'PUT','enctype' =>'multipart/form-data']) }}
 
-  <div class="form-group">
-    <label for="service_name" class="control-label">Service name:</label>
-    {{ Form::text('service_name',null,array('class'=>'form-control','customer_id'=>'service_name')) }}
-    @if($errors->has('service_name'))
-    <div class="alert alert-danger">>{{ $errors->first('service_name') }}</div>
-    @endif
-  </div> 
-<div class="form-group"> 
-    <label for="service_cost" class="control-label">Service cost:</label>
-    {{ Form::text('service_cost',null,array('class'=>'form-control','customer_id'=>'service_cost')) }}
-    @if($errors->has('service_cost'))
-    <div class="alert alert-danger">{{ $errors->first('service_cost') }}</div>
-    @endif
-  </div> 
-  <div class="form-group">
-    <label for="image" class="control-label">Customer Image:</label>
-    <input type="file" class="form-control" id="image" name="image">
-     <img src="{{ asset('images/'.$service->img_path) }}" width ="100" height="100" class="img-circle" enctype="multipart/form-data"/>
-    @if($errors->has('img_path'))
-    <div class="alert alert-danger">{{ $errors->first('img_path') }}</div>
-    @endif
-  </div>
-  </div>
+<div class="min-h-screen bg-gradient-to-b from-blue-900 to-blue-700 flex justify-center items-center p-6">
+  <div class="bg-white shadow-lg rounded-lg w-full max-w-lg p-8">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Edit Service</h2>
 
-<button type="submit" class="btn btn-primary">Update</button>
-<a href="{{url()->previous()}}" class="btn btn-default" role="button">Cancel</a>
-  </div>     
+    {{ Form::model($service, ['route' => ['service.update', $service->service_id], 'method' => 'PUT', 'enctype' => 'multipart/form-data']) }}
+
+    <div class="mb-4">
+        <label for="service_name" class="block text-gray-700 font-medium">Service Name</label>
+        {{ Form::text('service_name', null, ['class' => 'w-full p-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200', 'id' => 'service_name']) }}
+        @error('service_name')
+        <small class="text-red-500">{{ $message }}</small>
+        @enderror
+    </div>
+
+    <div class="mb-4">
+        <label for="service_cost" class="block text-gray-700 font-medium">Service Cost</label>
+        {{ Form::number('service_cost', null, ['class' => 'w-full p-2 border border-gray-300 rounded-lg focus:ring focus:ring-blue-200', 'id' => 'service_cost']) }}
+        @error('service_cost')
+        <small class="text-red-500">{{ $message }}</small>
+        @enderror
+    </div>
+
+    <div class="mb-4">
+        <label for="image" class="block text-gray-700 font-medium">Service Image</label>
+        <input type="file" id="image" name="image" class="w-full p-2 border border-gray-300 rounded-lg">
+        <img src="{{ asset('images/'.$service->img_path) }}" width="100" height="100" class="rounded-lg mt-2">
+        @error('img_path')
+        <small class="text-red-500">{{ $message }}</small>
+        @enderror
+    </div>
+
+    <div class="flex justify-between">
+        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition">
+            Update
+        </button>
+        <a href="{{ url()->previous() }}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition">
+            Cancel
+        </a>
+    </div>
+
+    {!! Form::close() !!}
+  </div>
 </div>
-{!! Form::close() !!} 
+
 @endsection

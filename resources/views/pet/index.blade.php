@@ -1,102 +1,106 @@
 @extends('layouts.master')
 
 @section('content')
-{{-- <style>
-body{
-    background: -webkit-linear-gradient(left, #3931af, #00c6ff);
-}
-</style> --}}
-<style >
-.a-btn-slide-text {
-  padding: 1%;
-   margin-top: 1%;
-    margin-bottom: 2%;
-    margin-left: 83%;
-    border-radius: 1.5rem;
-    /*background: #fff;*/
-}
-</style>
-  <div class="container">
-       {{-- <a href="{{route('pet.create')}}" class="fa-solid fa-cart-plus"> --}}
-       <center><a href="{{route('pet.create')}}" class="btn btn-primary a-btn-slide-text">
-        <span class="fas fa-user-plus" aria-hidden="true"></span>
-        <span><strong>ADD PET</strong></span></a><center>            
-    </a>
-  </div>
-@if ($message = Session::get('success'))
- <div class="alert alert-success alert-block">
- <button type="button" class="close" data-dismiss="alert">×</button> 
-    <strong>{{ $message }}</strong>
- </div>
-@endif
-<div class="table-responsive">
-<table class="table table-striped table-hover">
-    <thead>
-      <tr>
-        <th>Pet ID</th>
-        <th>Customer name</th>
-        <th>Breed</th>
-        <th>Pet name</th>
-        <th>Gender</th>
-        <th>Age</th>
-        <th>Image</th>
-        <th>Show</th>
-        <th>Edit</th>
-        <th>Delete</th>
-        <th>Restore</th>
-    
-        </tr>
-    </thead>
-<tbody>
-      @foreach($pets as $pet)
-      <tr>
-        <td>{{$pet->pet_id}}</td>
-        <td>{{$pet->fname}}</td>
-        <td>{{$pet->pbreed}}</td>
-        <td>{{$pet->pname}}</td>
-        <td>{{$pet->gender}}</td>
-        <td>{{$pet->age}}</td>
-        {{-- <td><img src="{{ asset($pet->img_path) }}" width="80" 
-                     height="80" class="img-circle" ></td> --}}
-                     <td><img src="{{ asset('images/'.$pet->img_path) }}" width ="80" height="80" class="img-circle" enctype="multipart/form-data"/></td>
+{{-- 
+<div class="min-h-screen bg-gray-100 flex flex-col items-center py-6 px-4">
+    <div class="container mx-auto">
+        <div class="flex justify-between items-center mb-4"> --}}
+                <div class="container mx-auto p-6">
+    <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-gray-800">Pet List</h2>
+            <a href="{{ route('pet.create') }}" 
+              class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition flex items-center">
+                <i class="fas fa-plus mr-2"></i> Add Pet
+            </a>
+        </div>
 
-        <td align="center">
-          @if($pet->deleted_at)
-            <i class="fas fa-eye" aria-hidden="true" style="font-size:24px; color:gray" ></i></a>
-          @else
-          <a href="{{ route('pet.show',$pet->pet_id) }}">
-            <i class="fas fa-eye" aria-hidden="true" style="font-size:24px" ></i></a>
-          @endif
-           </td>
-        <td align="center">
-          @if($pet->deleted_at)
-            <ii class="fas fa-user-edit" aria-hidden="true" style="font-size:24px; color:gray" ></i></a>
-          @else
-          <a href="{{route('pet.edit',$pet->pet_id)}}">
-            <i class="fas fa-user-edit" aria-hidden="true" style="font-size:24px" ></i></a>
-          @endif
-           </td>
-      <td align="center">
-          @if($pet->deleted_at)
-              <i class="fas fa-user-times" style="font-size:24px; color:gray" ></i>
-          @else
-              {!! Form::open(array('route' => array('pet.destroy', $pet->pet_id),'method'=>'DELETE')) !!}
-             <button ><i class="fas fa-user-times" style="font-size:24px; color:red" ></i></button>
-             {!! Form::close() !!}
-           @endif
-         </td>
-        @if($pet->deleted_at)
-          <td align="center"><a href="{{ route('pet.restore',$pet->pet_id) }}" ><i class="fa fa-undo" style="font-size:24px; color:red" disabled="true"></i></a>
-        </td>
+        {{-- Check if there are any pets --}}
+        @if ($pets->isEmpty())
+            <div class="bg-white shadow-lg rounded-lg p-6 text-center">
+                <h2 class="text-xl font-semibold text-gray-700">No data found</h2>
+                <p class="text-gray-500">There are no pets added yet. Click the "ADD PET" button to register a new pet.</p>
+            </div>
         @else
-        <td align="center"><a href="#" ><i class="fa fa-undo" style="font-size:24px; color:gray" ></i></a>
-      </td>
+            {{-- Table --}}
+        <div class="overflow-x-auto">
+                <table class="w-full bg-white border border-gray-300 rounded-lg shadow-sm">
+                    <thead class="bg-green-500 text-white">
+                        <tr>
+                            <th class="px-4 py-2 border">Pet ID</th>
+                            <th class="px-4 py-2 border">Customer Name</th>
+                            <th class="px-4 py-2 border">Breed</th>
+                            <th class="px-4 py-2 border">Pet Name</th>
+                            <th class="px-4 py-2 border">Gender</th>
+                            <th class="px-4 py-2 border">Age</th>
+                            <th class="px-4 py-2 border">Image</th>
+                            <th class="px-4 py-2 border">Show</th>
+                            <th class="px-4 py-2 border">Edit</th>
+                            <th class="px-4 py-2 border">Delete</th>
+                            <th class="px-4 py-2 border">Restore</th>
+                        </tr>
+                    </thead>
+                      <tbody class="bg-gray-100">
+                        @foreach($pets as $pet)
+                            <tr class="border-b border-gray-300 text-center">
+                                <td class="px-4 py-2">{{ $pet->pet_id }}</td>
+                                <td class="px-4 py-2">{{ $pet->fname }}</td>
+                                <td class="px-4 py-2">{{ $pet->pbreed }}</td>
+                                <td class="px-4 py-2">{{ $pet->pname }}</td>
+                                <td class="px-4 py-2">{{ $pet->gender }}</td>
+                                <td class="px-4 py-2">{{ $pet->age }}</td>
+                                <td class="px-4 py-2">
+                                    <img src="{{ asset('images/'.$pet->img_path) }}" width="80" height="80" class="rounded-full border border-gray-300 shadow-md"/>
+                                </td>
+                                <td class="py-3 px-4 text-center">
+                                    @if($pet->deleted_at)
+                                        <i class="fas fa-eye text-gray-400 text-xl"></i>
+                                    @else
+                                        <a href="{{ route('pet.show', $pet->pet_id) }}">
+                                            <i class="fas fa-eye text-blue-500 text-xl"></i>
+                                        </a>
+                                    @endif
+                                </td>
+                                <td class="py-3 px-4 text-center">
+                                    @if($pet->deleted_at)
+                                        <i class="fas fa-user-edit text-gray-400 text-xl"></i>
+                                    @else
+                                        <a href="{{ route('pet.edit', $pet->pet_id) }}">
+                                           <i class="fas fa-user-edit text-yellow-500 text-lg hover:text-yellow-700"></i>
+                                        </a>
+                                    @endif
+                                </td>
+                                <td class="py-3 px-4 text-center">
+                                    @if(!$pet->deleted_at)
+                                        {!! Form::open(['route' => ['pet.destroy', $pet->pet_id], 'method' => 'DELETE', 'class' => 'inline']) !!}
+                                        <button type="submit">
+                                            <i class="fas fa-user-times text-red-500 text-xl"></i>
+                                        </button>
+                                        {!! Form::close() !!}
+                                    @else
+                                        <i class="fas fa-user-times text-gray-400 text-xl"></i>
+                                    @endif
+                                </td>
+                                <td class="py-3 px-4 text-center">
+                                    @if($pet->deleted_at)
+                                        <a href="{{ route('pet.restore', $pet->pet_id) }}">
+                                            <i class="fa fa-undo text-red-500 text-xl"></i>
+                                        </a>
+                                    @else
+                                        <i class="fa fa-undo text-gray-400 text-xl"></i>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            {{-- Pagination --}}
+            <div class="mt-6 flex justify-center">
+            {{ $pets->links('pagination::tailwind') }}
+        </div>
         @endif
-      </tr>
-        
-      @endforeach
-</table>
-<div>{{$pets->links()}}</div>
+    </div>
 </div>
-</div>
+
 @endsection

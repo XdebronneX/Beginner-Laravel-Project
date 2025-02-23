@@ -1,94 +1,64 @@
 @extends('layouts.master')
+
 @section('content')
-<style>
-p{
-   color: #888888;  
-}
-h2{
-  border: 1px solid;
-  padding: 2px;
-  box-shadow: 2px 2px 2px #00FFFF;
-  color: #00FFFF;
-}
 
-.container .emp-profile{
-  border: 2px solid;
-  padding: 2px;
-  box-shadow: 5px 5px 5px #888888;
-}
+<div class="min-h-screen bg-gray-100 py-10 px-6">
+    <div class="max-w-5xl mx-auto bg-white shadow-lg rounded-lg p-8">
+        <h2 class="text-3xl font-bold text-blue-600 border-b-4 border-blue-400 pb-2 shadow-md mb-6 text-center">
+            Pet Details
+        </h2>
 
-.emp-profile{
-   padding: 1%;
-   margin-top: 1%;
-    margin-bottom: 2%;
-    border-radius: 5rem;
-    background: #fff;
-}
-.profile-head h2{
-    color: #800080;
-}
-</style>
-<h2>PET PROFILE</h2>
-<div class="container emp-profile">
-            <form method="post">
-                 @foreach($pet as $pets)
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="profile-img">
-                            <td><img src="{{ asset('images/'.$pets->img_path) }}" width ="360" height="360" class="img-circle" enctype="multipart/form-data"/></td>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="profile-head">
-                                    <h2>
-                                        <p>Pet ID: {{ $pets->pet_id}}</p>
-                                    </h2>
-                                    <h2>
-                                        <p>Pet name: {{ $pets->pname}}</p>
-                                    </h2>
-                                    <h2>
-                                       <p>Owner name: {{ $pets->fname}}</p>
-                                    </h2>
-                                    <h2>
-                                       <p>Breed: {{ $pets->pbreed}}</p>
-                                    </h2>
-                                    <h2>
-                                       <p>Gender: {{ $pets->gender}}</p>
-                                    </h2>
-                                    <h2>
-                                       <p>Age: {{ $pets->age}}</p>
-                                    </h2>
-                        </div>
-                    </div>
-                </div>
-                @endforeach
-            </form>           
+        @foreach($pet as $pets)
+        <div class="flex flex-col md:flex-row items-center bg-gray-50 p-6 rounded-lg shadow-md mb-8">
+            <div class="w-full md:w-1/3 flex justify-center">
+                <img src="{{ asset('images/'.$pets->img_path) }}" class="w-64 h-64 object-cover rounded-lg shadow-lg" />
+            </div>
+            <div class="w-full md:w-2/3 mt-6 md:mt-0 px-6">
+                <p class="text-gray-700"><span class="font-semibold text-lg text-blue-500">Pet ID:</span> {{ $pets->pet_id }}</p>
+                <p class="text-gray-700"><span class="font-semibold text-lg text-blue-500">Pet Name:</span> {{ $pets->pname }}</p>
+                <p class="text-gray-700"><span class="font-semibold text-lg text-blue-500">Owner Name:</span> {{ $pets->fname }}</p>
+                <p class="text-gray-700"><span class="font-semibold text-lg text-blue-500">Breed:</span> {{ $pets->pbreed }}</p>
+                <p class="text-gray-700"><span class="font-semibold text-lg text-blue-500">Gender:</span> {{ $pets->gender }}</p>
+                <p class="text-gray-700"><span class="font-semibold text-lg text-blue-500">Age:</span> {{ $pets->age }}</p>
+            </div>
+        </div>
+        @endforeach
+
+        <h2 class="text-3xl font-bold text-blue-600 border-b-4 border-blue-400 pb-2 shadow-md mt-10 text-center">
+            Medical History
+        </h2>
+
+        <div class="overflow-x-auto mt-6">
+            <table class="w-full bg-white shadow-md rounded-lg overflow-hidden">
+                <thead>
+                    <tr class="bg-green-500 text-white text-left">
+                        <th class="py-3 px-6">Record #</th>
+                        <th class="py-3 px-6">Veterinarian Name</th>
+                        <th class="py-3 px-6">Disease or Injuries</th>
+                        <th class="py-3 px-6">Observation</th>
+                        <th class="py-3 px-6">Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($consultations as $consultation)
+                    <tr class="border-b hover:bg-gray-100 transition">
+                        <td class="py-3 px-6">{{ $consultation->consult_id }}</td>
+                        <td class="py-3 px-6">{{ $consultation->lname }}</td>
+                        <td class="py-3 px-6">{{ $consultation->disease_name }}</td>
+                        <td class="py-3 px-6">{{ $consultation->observation }}</td>
+                        <td class="py-3 px-6 text-green-600 font-semibold">${{ $consultation->consult_cost }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
 
-<h2>PET MEDICAL HISTORY PROFILE</h2>
-<table class="table table-striped table-hover">
-    <thead>
-      <tr>
-        <th>Consultation ID</th>
-        <th>Veterinarian name</th>
-        {{-- <th>Pet name</th>
-        <th>Pet gender</th>
-        <th>Pet age</th> --}}
-        <th>Disease or Injuries</th>
-        <th>Observation</th>
-        <th>Cost</th>
-        </tr>
-    </thead>
-<tbody>
-      @foreach($consultations as $consultation)
-      <tr>
-        <td>{{$consultation->consult_id}}</td>
-        <td>{{$consultation->lname}}</td>
-        {{-- <td>{{$consultation->pname}}</td>
-        <td>{{$consultation->gender}}</td>
-        <td>{{$consultation->age}}</td> --}}
-        <td>{{$consultation->disease_name}}</td>
-         <td>{{$consultation->observation}}</td>
-        <td>{{$consultation->consult_cost}}</td>
-        @endforeach
+        <div class="mt-8 flex justify-center">
+            <a href="{{ url()->previous() }}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition">
+                Back
+            </a>
+        </div>
+    </div>
+</div>
+
 @endsection

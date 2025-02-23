@@ -101,19 +101,42 @@ class EmployeeController extends Controller
             return redirect()->back();
         };
      }
-      public function index()
-    {
-       
-            $employees = DB::table('employees')
-            ->leftJoin('users', 'id','employees.user_id')
-            ->select('employees.emp_id','users.email','employees.fname', 'employees.lname','employees.addressline','employees.phone','employees.town','employees.zipcode','employees.img_path','employees.deleted_at')
-            ->orderBy('emp_id', 'DESC')
-            ->paginate(10);
-            // ->get();
-        
-        return View::make('employee.index',compact('employees'));
+     public function index()
+{
+    $employees = DB::table('employees')
+        ->leftJoin('users', 'users.id', '=', 'employees.user_id')
+        ->select(
+            'employees.emp_id',
+            'users.email',
+            'employees.fname',
+            'employees.lname',
+            'employees.addressline',
+            'employees.phone',
+            'employees.town',
+            'employees.zipcode',
+            'employees.img_path',
+            'employees.deleted_at'
+        )
+        ->orderBy('employees.emp_id', 'DESC')
+        ->paginate(10);
 
-    }
+    return View::make('employee.index', compact('employees'));
+}
+
+//  public function index()
+//     {
+       
+//             $employees = DB::table('employees')
+//             ->leftJoin('users', 'id','employees.user_id')
+//             ->select('employees.emp_id','users.email','employees.fname', 'employees.lname','employees.addressline','employees.phone','employees.town','employees.zipcode','employees.img_path','employees.deleted_at')
+//             ->orderBy('emp_id', 'DESC')
+//             ->paginate(10);
+//             // ->get();
+        
+//         return View::make('employee.index',compact('employees'));
+
+//     }
+
      public function create()
     {
         return View::make('employee.create');
@@ -168,11 +191,20 @@ class EmployeeController extends Controller
          // return Redirect::to('employee.index')->with('success','New employee added!');
         return redirect()->route('employee.index')->with('success','New Employee Added!');
     }
-    public function show($emp_id)
-    {
-        $employee = Employee::find($emp_id);
-        return view('employee.show',compact('employee'));
+
+    public function show($emp_id) {
+
+    $employee = Employee::leftJoin('users', 'users.id', '=', 'employees.user_id')
+        ->select(
+            'employees.*',
+            'users.email as user_email'
+        )
+        ->where('employees.emp_id', $emp_id)
+        ->first();
+
+    return view('employee.show', compact('employee'));
     }
+
 
      public function edit($emp_id)
     {

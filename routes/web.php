@@ -14,12 +14,14 @@ use Illuminate\Support\Facades\Route;
 */
 Route::get('/', function () {
         return view('welcome'); 
-    });
-Route::get('/home', function () {
-        return View::make('home'); 
-    });
+});
+// Route::get('/home', function () {
+//     return view('home');
+// })->name('home');
 
- Route::resource('disease', 'DiseaseController')->middleware('auth');
+Route::get('/home', [App\Http\Controllers\TransactionController::class, 'index'])->name('home');
+
+Route::resource('disease', 'DiseaseController')->middleware('auth');
 //Route::resource('disease', 'DiseaseController');
 Route::get('/disease/restore/{id}',['uses' => 'DiseaseController@restore','as' => 'disease.restore']);
 
@@ -32,7 +34,7 @@ Route::resource('customer', 'CustomerController')->middleware('auth');
 Route::get('/customer/restore/{id}',['uses' => 'CustomerController@restore','as' => 'customer.restore']);
 
 //test
- Route::resource('employee', 'EmployeeController')->middleware('auth');
+Route::resource('employee', 'EmployeeController')->middleware('auth');
 //Route::resource('employee', 'EmployeeController');
 Route::get('/employee/restore/{id}',['uses' => 'EmployeeController@restore','as' => 'employee.restore']);
 
@@ -58,7 +60,7 @@ Route::get('/Signup', [
         'uses' => 'EmployeeController@getSignup',
         'as' => 'employee.signup']);
 
- Route::post('/Signup', [
+Route::post('/Signup', [
         'uses' => 'EmployeeController@postSignup',
         'as' => 'employee.signup']);
 
@@ -69,22 +71,20 @@ Route::get('/Signup', [
 //         ]);
 //       });
 
- Route::get('logout', [
+Route::get('logout', [
         'uses' => 'EmployeeController@getLogout',
         'as' => 'employee.logout']);
 
-  Route::get('signin', [
+Route::get('signin', [
                 'uses' => 'EmployeeController@getSignin',
                 'as' => 'employee.signin']);
 
-  Route::post('/signin', [
+Route::post('/signin', [
         'uses' => 'EmployeeController@postSignin',
         'as' => 'employee.signin']);
 
-Route::get('/search','ConsultController@search')->middleware('auth');
-  // Route::get('/search', [
-  //       'uses' => 'ConsultationController@search',
-  //       'as' => 'consult.index']);
+Route::get('/consultation','ConsultController@search')->middleware('auth');
+
 Route::resource('comment', 'CommentController')->middleware('auth');
 
 Route::get('/reviews/showServices/{id}',['uses' => 'CommentController@showServices','as' => 'reviews.showServices']);
@@ -115,4 +115,4 @@ Route::post('checkout',[
     ]);
 Route::get('/search', [
         'uses' => 'TransactionController@search',
-        'as' => 'service.searchingindex']);
+        'as' => 'service.searchingindex'])->middleware('auth');

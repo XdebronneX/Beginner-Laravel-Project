@@ -1,63 +1,67 @@
 @extends('layouts.master')
 @section('content')
-<style>
-h2{
-  color: #00FFFF;
-}
-strong {
-    color: #f2f2f2;
-}
-.container .user-profile{
-  border: 2px solid;
-  padding: 2px;
-  box-shadow: 5px 5px 5px #00FFFF;
-    margin-top: 15%;
-    margin-bottom: 10%;
-    border-radius: 50rem;
-}
-</style>
-<div class="container user-profile">
-            <form method="post">
-                @foreach($employees as $employee)
-                <div class="row">
-                    <div class="col-md-12">
-                            <center>
-                                 <h2>Profile Picture</h2>
-                                    <p><strong><td><img src="{{ asset('images/'.$employee->img_path) }}" width ="100" height="100" class="img-circle" enctype="multipart/form-data"/></td></strong></p>
-                                            
-                                    <h2>
-                                        <p>Firstname:<strong>{{ $employee->fname}}</strong></p>
-                                    </h2>
-                                     <h2>
-                                        <p>Lastname:<strong>{{ $employee->lname}}</strong></p>
-                                    </h2>
-                                    <h2>
-                                         <p>Email: <strong>{{ $employee->email}}</strong></p>
-                                    </h2>
-                                    <h2>
-                                        <p>Address: <strong>{{ $employee->addressline}}</strong></p>
-                                    </h2>
-                                    <h2>
-                                       <p>Town: <strong>{{ $employee->town}}</strong></p>
-                                    </h2>
-                                    <h2>
-                                       <p>Zipcode: <strong>{{ $employee->zipcode}}</strong></p>
-                                    </h2>
-                                     <h2>
-                                      <p>Phone: <strong>{{ $employee->phone}}</strong></p>
-                                    </h2>
-                                    </center>
-                        {{-- </div> --}}
+
+<div class="flex justify-center items-center min-h-screen bg-gradient-to-b from-blue-900 to-blue-700 px-4 py-12">
+    <div class="bg-white text-gray-900 rounded-3xl shadow-lg p-10 w-full max-w-4xl">
+        @foreach($employees as $employee)
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                
+                <!-- Left Side (Profile Picture) -->
+                <div class="flex flex-col items-center">
+                    <div class="w-40 h-40 border-4 border-green-600 rounded-full overflow-hidden shadow-lg">
+                        <img src="{{ asset('images/'.$employee->img_path) }}" alt="Profile Picture" class="w-full h-full object-cover">
                     </div>
+                    <h2 class="text-2xl font-bold text-gray-900 mt-4">Employee Profile</h2>
                 </div>
-                @endforeach
-            </form>           
-        </div>
-   {{--  <div class="row">
-        <div class="col-md-4 col-md-offset-4">
-            <h1>USER LOGGED IN!</h1>
-            <h2><strong><p>{{ $employee()->name}}</strong></h2></p>
-            <h2><strong><span></h2><p>{{ $employee()->email}}</span></strong></h2></p>
-        </div>
-     </div> --}}
+
+                <!-- Right Side (Employee Details) -->
+                <div class="space-y-4 text-lg">
+                    <p>
+                        <span class="text-gray-500">Firstname:</span> 
+                        <strong class="text-gray-900">{{ $employee->fname }}</strong>
+                    </p>
+                    
+                    <p>
+                        <span class="text-gray-500">Lastname:</span> 
+                        <strong class="text-gray-900">{{ $employee->lname }}</strong>
+                    </p>
+                    
+                    <p>
+                        <span class="text-gray-500">Email:</span> 
+                        <strong class="text-gray-900">{{ $employee->email }}</strong>
+                    </p>
+                    
+                    <p>
+                        <span class="text-gray-500">Address:</span> 
+                        <strong class="text-gray-900">{{ $employee->addressline }}</strong>
+                    </p>
+                    
+                    <p>
+                        <span class="text-gray-500">Town:</span> 
+                        <strong class="text-gray-900">{{ $employee->town }}</strong>
+                    </p>
+                    
+                    <p>
+                        <span class="text-gray-500">Zipcode:</span> 
+                        <strong class="text-gray-900">{{ $employee->zipcode }}</strong>
+                    </p>
+                    
+                    <p>
+                        <span class="text-gray-500">Phone:</span> 
+                        <strong class="text-gray-900">{{ $employee->phone }}</strong>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Back Button -->
+            {{-- <div class="mt-6 flex justify-center">
+                <a href="{{ url()->previous() }}" 
+                   class="px-6 py-3 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded-lg shadow-md transition-all">
+                    Back
+                </a>
+            </div> --}}
+        @endforeach
+    </div>
+</div>
+
 @endsection

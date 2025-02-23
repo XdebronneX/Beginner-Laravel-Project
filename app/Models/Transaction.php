@@ -13,7 +13,7 @@ class Transaction extends Model
     public $timestamps = true;
 
     protected $guarded = ['groominginfo_id'];
-    protected $fillable = ['pet_id'];
+    protected $fillable = ['pet_id', 'status'];
 
    public static $rules = [ 
                 'pet_id'=>'required'

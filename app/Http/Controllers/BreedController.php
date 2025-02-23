@@ -20,7 +20,7 @@ class BreedController extends Controller
     {
         // $breeds = breed::orderBy('breed_id','ASC')->get();
         //$breeds = breed::orderBy('breed_id','ASC')->paginate(10);
-        $breeds = Breed::withTrashed()->orderBy('petb_id','ASC')->paginate(10);
+        $breeds = Breed::withTrashed()->orderBy('petb_id','DESC')->paginate(10);
         
         return View::make('breed.index',compact('breeds'));
        

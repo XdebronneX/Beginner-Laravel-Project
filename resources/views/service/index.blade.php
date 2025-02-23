@@ -1,89 +1,93 @@
 @extends('layouts.master')
+
 @section('content')
-<style >
-.a-btn-slide-text {
-  padding: 1%;
-   margin-top: 1%;
-    margin-bottom: 2%;
-    margin-left: 83%;
-    border-radius: 1.5rem;
-    /*background: #fff;*/
-}
-</style>
-  <div class="container">
-       {{-- <a href="{{route('service.create')}}" class="fa-solid fa-cart-plus"> --}}
-       <center><a href="{{route('service.create')}}" class="btn btn-primary a-btn-slide-text">
-        <span class="fas fa-user-plus" aria-hidden="true"></span>
-        <span><strong>ADD SERVICE+</strong></span></a><center>            
-    </a>
-  </div>
-@if ($message = Session::get('success'))
- <div class="alert alert-success alert-block">
- <button type="button" class="close" data-dismiss="alert">×</button> 
-    <strong>{{ $message }}</strong>
- </div>
-@endif
-<div class="table-responsive">
-<table class="table table-striped table-hover">
-    <thead>
-      <tr>
-        <th>Service ID</th>
-        <th>Service name</th>
-        <th>Service cost</th>
-        <th>Image</th>
-        <th>Show</th>
-        <th>Edit</th>
-        <th>Delete</th>
-        <th>Restore</th>
-    
-        </tr>
-    </thead>
-<tbody>
-      @foreach($services as $service)
-      <tr>
-        <td>{{$service->service_id}}</td>
-        <td>{{$service->service_name}}</td>
-        <td>{{$service->service_cost}}</td>
-          <td><img src="{{ asset('images/'.$service->img_path) }}" width ="80" height="80" class="img-circle" enctype="multipart/form-data"/></td>
-        {{-- <td><img src="{{ asset($service->img_path) }}" width="80" 
-                     height="80" class="img-circle" ></td> --}}
-        <td align="center">
-          @if($service->deleted_at)
-            <i class="fas fa-eye" aria-hidden="true" style="font-size:30px; color:gray" ></i></a>
-          @else
-          <a href="{{ route('service.show',$service->service_id) }}">
-            <i class="fas fa-eye" aria-hidden="true" style="font-size:30px" ></i></a>
-          @endif
-           </td>
-        <td align="center">
-          @if($service->deleted_at)
-            <ii class="fas fa-user-edit" aria-hidden="true" style="font-size:30px; color:gray" ></i></a>
-          @else
-          <a href="{{route('service.edit',$service->service_id)}}">
-            <i class="fas fa-user-edit" aria-hidden="true" style="font-size:30px" ></i></a>
-          @endif
-           </td>
-      <td align="center">
-          @if($service->deleted_at)
-              <i class="fas fa-user-times" style="font-size:30px; color:gray" ></i>
-          @else
-              {!! Form::open(array('route' => array('service.destroy', $service->service_id),'method'=>'DELETE')) !!}
-             <button ><i class="fas fa-user-times" style="font-size:30px; color:red" ></i></button>
-             {!! Form::close() !!}
-           @endif
-         </td>
-        @if($service->deleted_at)
-          <td align="center"><a href="{{ route('service.restore',$service->service_id) }}" ><i class="fa fa-undo" style="font-size:30px; color:red" disabled="true"></i></a>
-        </td>
-        @else
-        <td align="center"><a href="#" ><i class="fa fa-undo" style="font-size:24px; color:gray" ></i></a>
-      </td>
-        @endif
-      </tr>
-        
-      @endforeach
-</table>
-<div>{{$services->links()}}</div>
+
+<div class="container mx-auto p-6">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-bold text-gray-800">Service List</h2>
+        <a href="{{ route('service.create') }}" 
+        class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition flex items-center">
+            <i class="fas fa-plus mr-2"></i> Add Service
+        </a>
+    </div>
+
+    @if($services->isEmpty())
+        <div class="bg-white shadow-lg rounded-lg p-6 text-center">
+            <h2 class="text-xl font-semibold text-gray-700">No data found</h2>
+            <p class="text-gray-500">There are no services added yet. Click the "ADD SERVICE" button to register a new service.</p>
+        </div>
+    @else
+        <div class="overflow-x-auto">
+            <table class="w-full bg-white border border-gray-300 rounded-lg shadow-sm">
+                <thead class="bg-green-500 text-white">
+                    <tr>
+                        <th class="px-4 py-2 border">Service ID</th>
+                        <th class="px-4 py-2 border">Service Name</th>
+                        <th class="px-4 py-2 border">Service Cost</th>
+                        <th class="px-4 py-2 border">Image</th>
+                        <th class="px-4 py-2 border">Show</th>
+                        <th class="px-4 py-2 border">Edit</th>
+                        <th class="px-4 py-2 border">Delete</th>
+                        <th class="px-4 py-2 border">Restore</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-gray-100">
+                    @foreach($services as $service)
+                    <tr class="border-b border-gray-300 text-center">
+                        <td class="px-4 py-2">{{ $service->service_id }}</td>
+                        <td class="px-4 py-2">{{ $service->service_name }}</td>
+                        <td class="px-4 py-2">{{ $service->service_cost }}</td>
+                        <td class="px-4 py-2">
+                            <img src="{{ asset('images/'.$service->img_path) }}" width="60" height="60" class="rounded-lg">
+                        </td>
+                        <td class="px-4 py-2">
+                            @if($service->deleted_at)
+                                <i class="fas fa-eye text-gray-400 text-lg"></i>
+                            @else
+                                <a href="{{ route('service.show', $service->service_id) }}" class="text-blue-500 hover:text-blue-700">
+                                    <i class="fas fa-eye text-lg"></i>
+                                </a>
+                            @endif
+                        </td>
+                        <td class="px-4 py-2">
+                            @if($service->deleted_at)
+                                <i class="fas fa-user-edit text-gray-400 text-lg"></i>
+                            @else
+                                <a href="{{ route('service.edit', $service->service_id) }}" class="text-yellow-500 hover:text-yellow-700">
+                                    <i class="fas fa-user-edit text-lg"></i>
+                                </a>
+                            @endif
+                        </td>
+                        <td class="px-4 py-2">
+                            @if(!$service->deleted_at)
+                                {!! Form::open(['route' => ['service.destroy', $service->service_id], 'method' => 'DELETE', 'class' => 'inline-block']) !!}
+                                <button type="submit" class="text-red-500 hover:text-red-700">
+                                    <i class="fas fa-user-times text-lg"></i>
+                                </button>
+                                {!! Form::close() !!}
+                            @else
+                                <i class="fas fa-user-times text-gray-400 text-lg"></i>
+                            @endif
+                        </td>
+                        <td class="px-4 py-2">
+                            @if($service->deleted_at)
+                                <a href="{{ route('service.restore', $service->service_id) }}" class="text-red-500 hover:text-red-700">
+                                    <i class="fa fa-undo text-lg"></i>
+                                </a>
+                            @else
+                                <i class="fa fa-undo text-gray-400 text-lg"></i>
+                            @endif
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-6 flex justify-center">
+            {{ $services->links('pagination::tailwind') }}
+        </div>
+    @endif
 </div>
-</div>
+
 @endsection

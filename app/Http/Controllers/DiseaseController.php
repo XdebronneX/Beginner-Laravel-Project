@@ -23,7 +23,7 @@ class DiseaseController extends Controller
      */
     public function index()
     {
-         $diseases = Disease::withTrashed()->orderBy('disease_id','ASC')->paginate(10);
+         $diseases = Disease::withTrashed()->orderBy('disease_id','DESC')->paginate(10);
         
         return View::make('disease.index',compact('diseases'));
     }
@@ -46,7 +46,7 @@ class DiseaseController extends Controller
      */
     public function store(Request $request)
     {
-         $validator = Validator::make($request->all(), Disease::$rules);
+        $validator = Validator::make($request->all(), Disease::$rules);
 
                 if ($validator->fails()) {
                 return redirect()->back()->withInput()->withErrors($validator);
@@ -118,6 +118,6 @@ class DiseaseController extends Controller
     public function restore($disease_id) 
     {
        Disease::withTrashed()->where('disease_id',$disease_id)->restore();
-        return  Redirect::route('disease.index')->with('success','breed restored successfully!');
+        return  Redirect::route('disease.index')->with('success','Disease restored successfully!');
     }
 }

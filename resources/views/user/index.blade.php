@@ -91,6 +91,9 @@ body{
       @endforeach
 </table>
 {{-- <div>{{$users->links()}}</div> --}}
+        <div class="mt-6 flex justify-center">
+            {{ $users->links('pagination::tailwind') }}
+        </div>
 </div>
 </div>
 @endsection

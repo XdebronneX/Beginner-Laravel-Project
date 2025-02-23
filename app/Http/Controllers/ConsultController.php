@@ -62,50 +62,78 @@ class ConsultController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {    
-        //$users = Auth::user()->id;
-        // $user =  Employee::where('employees.user_id','=',$users);
-        $users = Auth::user();
-        $employees = DB::table('employees')
+    // public function store(Request $request)
+    // {    
+    //     //$users = Auth::user()->id;
+    //     // $user =  Employee::where('employees.user_id','=',$users);
+    //     $users = Auth::user();
+    //     $employees = DB::table('employees')
 
-            ->leftJoin('users', 'id','employees.user_id')
-            ->select('employees.emp_id')
-            ->where('employees.user_id','=',$users)
-            ->get();
+    //         ->leftJoin('users', 'id','employees.user_id')
+    //         ->select('employees.emp_id')
+    //         ->where('employees.user_id','=',$users)
+    //         ->get();
             
-        //try {
-            //DB::beginTransaction();
-            $consultations = new Consultation;
+    //     //try {
+    //         //DB::beginTransaction();
+    //         $consultations = new Consultation;
 
-            //pinakamalapit
-            //$consultations->emp_id = Employee::where(Auth::user()->first());
-            $consultations->pet_id = $request->pet_id;
-            $consultations->disease_id = $request->disease_id;
-            $consultations->consult_cost = $request->consult_cost;
-            $consultations->observation = $request->observation;
-            // $consultations->emp_id = 14;
-            //$consultations->emp_id = Auth::user()->id;
-            //$consultations = Employee::where('user_id', Auth::id())->first();
-            //$consultations =  Employee::where('user_id', Auth::id())->first();
-            //$consultations =  Employee::where($employees, Auth::id())->first();
-            //dd($consultations);
-            $consultations->save();
+    //         //pinakamalapit
+    //         //$consultations->emp_id = Employee::where(Auth::user()->first());
+    //         $consultations->pet_id = $request->pet_id;
+    //         $consultations->disease_id = $request->disease_id;
+    //         $consultations->consult_cost = $request->consult_cost;
+    //         $consultations->observation = $request->observation;
+    //         // $consultations->emp_id = 14;
+    //         //$consultations->emp_id = Auth::user()->id;
+    //         //$consultations = Employee::where('user_id', Auth::id())->first();
+    //         //$consultations =  Employee::where('user_id', Auth::id())->first();
+    //         //$consultations =  Employee::where($employees, Auth::id())->first();
+    //         //dd($consultations);
+    //         $consultations->save();
 
-            //dd($input);
-             // $user =  Employee::where('user_id', Auth::id())->first();
-            //$user =  User::where('emp_id', Auth::emp_id())->first();
-        //}
-        //catch (\Exception $e) {
+    //         //dd($input);
+    //          // $user =  Employee::where('user_id', Auth::id())->first();
+    //         //$user =  User::where('emp_id', Auth::emp_id())->first();
+    //     //}
+    //     //catch (\Exception $e) {
                     
-                    //DB::rollback();
-                    //return redirect()->route('consult.create')->with('error', $e->getMessage());
-                // }
+    //                 //DB::rollback();
+    //                 //return redirect()->route('consult.create')->with('error', $e->getMessage());
+    //             // }
             
-        //DB::commit();
-        return redirect()->route('consult.index')->with('success','New consultation added!');
-    }
+    //     //DB::commit();
+    //     return redirect()->route('consult.index')->with('success','New consultation added!');
+    // }
     
+public function store(Request $request)
+{    
+    $users = Auth::user();
+
+    // Fetch the emp_id of the logged-in user
+    $employee = DB::table('employees')
+        ->where('user_id', Auth::id())
+        ->select('emp_id')
+        ->first();
+
+    // Ensure the employee exists
+    if (!$employee) {
+        return redirect()->route('consult.create')->with('error', 'Employee record not found!');
+    }
+
+    // Create a new consultation entry
+    $consultations = new Consultation;
+    $consultations->emp_id = $employee->emp_id; // Now correctly assigning emp_id
+    $consultations->pet_id = $request->pet_id;
+    $consultations->disease_id = $request->disease_id;
+    $consultations->consult_cost = $request->consult_cost;
+    $consultations->observation = $request->observation;
+
+    // Save the consultation
+    $consultations->save();
+
+    return redirect()->route('consult.index')->with('success', 'New consultation added!');
+}
 
     /**
      * Display the specified resource.
@@ -120,7 +148,7 @@ class ConsultController extends Controller
             ->leftJoin('pets','pets.pet_id','=','health_consultation.pet_id')
             ->leftJoin('disease_injuries','disease_injuries.disease_id','=','health_consultation.disease_id')
             ->leftJoin('employees','employees.emp_id','=','health_consultation.emp_id')
-            ->select('health_consultation.consult_id','employees.lname','pets.pname','pets.gender','pets.age','disease_injuries.disease_name','health_consultation.consult_cost','health_consultation.observation','health_consultation.deleted_at')
+            ->select('health_consultation.consult_id','employees.lname','pets.pname','pets.gender','pets.age','pets.img_path','disease_injuries.disease_name','health_consultation.consult_cost','health_consultation.observation','health_consultation.deleted_at')
             ->where('health_consultation.consult_id', '=', $consult_id)
             ->get();
 
@@ -187,9 +215,10 @@ class ConsultController extends Controller
         return  Redirect::route('consult.index')->with('success','consultation Restored Successfully!');
     }
 
-    public function search(){
-        $searching = $request->get('search');
-        //$searching = $_GET['query'];
+    public function search(Request $request){
+        // $searching = $request->get('consultation');
+          $searching = $request->get('query'); 
+        // $searching = $_GET['query'];
         //Select pets table
          $pet = DB::table('pets')
 

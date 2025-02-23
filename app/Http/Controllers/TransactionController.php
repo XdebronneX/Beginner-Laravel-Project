@@ -21,8 +21,8 @@ class TransactionController extends Controller
      */
     public function index()
     {
-        $transacts = GroomingService::all()->whereNull('deleted_at');
-        return view::make('shop.index',compact('transacts'));
+        $transacts = GroomingService::whereNull('deleted_at')->get();
+        return view('home', compact('transacts'));
     }
 
     /**
@@ -104,7 +104,7 @@ class TransactionController extends Controller
         //$request->session()->save();
         Session::save();
         //dd(Session::all());
-         return redirect()->route('transact.index');
+        return redirect()->route('transact.index');
     }
 
     public function getCart() {
@@ -130,44 +130,107 @@ class TransactionController extends Controller
          return redirect()->route('service.shoppingCart');
     }
 
-    public function storeCheckout(Request $request)
-    {
-        if (!Session::has('cart')) {
-            return redirect()->route('transact.index');
-        }
-        $oldCart = Session::get('cart');
-        $cart = new Cart($oldCart);
-         //dd($cart);
-        try {
-             DB::beginTransaction();
-            $order = new Transaction();
-            //dd($order);
-            $order->pet_id = $request->pet_id;
-            $order->status = 'Processing';
-            //dd($order);
-            $order->save();
-            // dd($order);
-        foreach($cart->services as $services){
-                $id = $services['service']['service_id'];
-                 //dd($id);
-                DB::table('groomingline')->insert(
-                    ['service_id' => $id, 
-                     'groominginfo_id' => $order->groominginfo_id
-                    ]
-                    );
-            }
-            //dd($order);
-        }
-        catch (\Exception $e) {
-             //dd($e);
-            DB::rollback();
-             //dd($order);
-            return redirect()->route('service.shoppingCart')->with('error', $e->getMessage());
-        }
-            DB::commit();
-            Session::forget('cart');
-            return redirect()->route('transact.index')->with('success','Successfully Purchased Your Products!!!');
+    // public function storeCheckout(Request $request)
+    // {
+    //     if (!Session::has('cart')) {
+    //         return redirect()->route('transact.index');
+    //     }
+    //     $oldCart = Session::get('cart');
+    //     $cart = new Cart($oldCart);
+    //      //dd($cart);
+    //     try {
+    //          DB::beginTransaction();
+    //         $order = new Transaction();
+    //         //dd($order);
+    //         $order->pet_id = $request->pet_id;
+    //         // $order->status = 'Processing';
+    //         dd($order);
+    //         $order->save();
+    //         // dd($order);
+    //     foreach($cart->services as $services){
+    //             $id = $services['service']['service_id'];
+    //              //dd($id);
+    //             DB::table('groomingline')->insert(
+    //                 ['service_id' => $id, 
+    //                  'groominginfo_id' => $order->groominginfo_id
+    //                 ]
+    //                 );
+    //         }
+    //         // dd($order);
+    //     }
+    //     catch (\Exception $e) {
+    //          //dd($e);
+    //         DB::rollback();
+    //          //dd($order);
+    //         return redirect()->route('service.shoppingCart')->with('error', $e->getMessage());
+    //     }
+    //         DB::commit();
+    //         Session::forget('cart');
+    //         return redirect()->route('transact.index')->with('success','Successfully Purchased Your Products!!!');
+    // }
+
+   public function storeCheckout(Request $request)
+{
+    if (!Session::has('cart')) {
+        return redirect()->route('transact.index');
     }
+
+    $oldCart = Session::get('cart');
+    $cart = new Cart($oldCart);
+
+    try {
+        DB::beginTransaction();
+
+        // Create a new Transaction (grooming_info entry)
+        $order = new Transaction();
+        $order->pet_id = $request->pet_id;
+        $order->status = 'Processing';
+        $order->save(); // Save first before accessing groominginfo_id
+
+        // Debugging: Check if order saved correctly
+        // dd($order->toArray()); // Check what was saved in the database
+
+        // Retrieve generated ID
+        $orderId = $order->groominginfo_id;
+
+        if (!$orderId) {
+            throw new \Exception('Order ID not generated.');
+        }
+
+    foreach ($cart->services as $service) {
+    $id = $service['service']['service_id'];
+    $groominginfo_id = $order->groominginfo_id;
+
+    // Debug: Print values before insert
+    // dd([
+    //     'service_id' => $id,
+    //     'groominginfo_id' => $groominginfo_id
+    // ]);
+
+    // Perform insert
+    $inserted = DB::table('groomingline')->insert([
+        'service_id' => $id,
+        'groominginfo_id' => $groominginfo_id
+    ]);
+
+    // Check if insertion was successful
+    if (!$inserted) {
+        dd("Insertion Failed!");
+    }
+}
+
+        DB::commit();
+        Session::forget('cart');
+
+        return redirect()->route('transact.index')->with('success', 'Successfully Purchased Your Products!');
+    } catch (\Exception $e) {
+        DB::rollback();
+        \Log::error('Checkout Error: ' . $e->getMessage());
+        return redirect()->route('service.shoppingCart')->with('error', $e->getMessage());
+    }
+}
+
+
 
     public function search(Request $request){
         $search= $request->get('search');
@@ -178,8 +241,8 @@ class TransactionController extends Controller
             ->leftJoin('customers','customers.customer_id','=','pets.customer_id')
             ->leftJoin('grooming_service','grooming_service.service_id','=','groomingline.service_id')
             ->select('grooming_info.groominginfo_id','customers.lname','customers.fname','pets.pname','grooming_service.service_name','grooming_info.status','grooming_info.created_at')
-            ->where('pname','LIKE', '%' .$search. '%')
-             ->get();
+            ->where('service_name','LIKE', '%' .$search. '%')
+            ->paginate(10);
            
         // return View::make('history.index',compact('transacts'));
         return view('history.index', ['transacts' => $transacts]);
@@ -193,7 +256,7 @@ class TransactionController extends Controller
             ->leftJoin('customers','customers.customer_id','=','pets.customer_id')
             ->leftJoin('grooming_service','grooming_service.service_id','=','groomingline.service_id')
             ->select('grooming_info.groominginfo_id','customers.lname','customers.fname','pets.pname','grooming_service.service_name','grooming_info.status','grooming_info.created_at')
-             ->get();
+            ->get();
 
          return View::make('history.index',compact('transacts'));
 
